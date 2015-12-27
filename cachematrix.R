@@ -23,15 +23,28 @@
 ## are undefined.
 makeCacheMatrix <- function(x = matrix()) 
 {
+        ## Initialize inv_x to NULL. This is treated like a private
+        ## member of the object.
         inv_x <- NULL
+        
+        ## The setter method for the initial matrix.
         set <- function(y)
         {
                 x <<- y
                 inv_x <<- NULL
         }
+        
+        ## The getter method for the initial matrix.
         get <- function() x
+        
+        ## The setter method to cache the inverse matrix.
         setInverse <- function(inv) inv_x <<- inv
+        
+        ## The getter method to retrieve the cached inverse matrix.
         getInverse <- function() inv_x
+        
+        ## Returned object in the form of a list. This is what I call
+        ## poor man's object oriented programming in R!! :)
         list(set = set, get = get, setInverse = setInverse,
              getInverse = getInverse)
 }
@@ -52,15 +65,19 @@ makeCacheMatrix <- function(x = matrix())
 ## matrix inside the object 'x' has not changed since creation.
 cacheSolve <- function(x, ...)
 {
-        ## Return a matrix that is the inverse of 'x'
+        ## Check in the cache if inverse already exists.
+        ## If so, return the cached copy.
         inv_x <- x$getInverse()
         if (!is.null(inv_x))
         {
                 message("getting cached inverse")
                 return(inv_x)
         }
+        
+        ## Not found in the cache, so compute it, cache it,
+        ## and return it.
         m <- x$get()
         inv_x <- solve(m)
         x$setInverse(inv_x)
-        m
+        inv_x
 }
